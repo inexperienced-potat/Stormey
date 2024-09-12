@@ -2,20 +2,23 @@ extends Node
 class_name StateMachine
 
 enum MovementStates {IDLE, MOVE}
-enum ActionStates {NO_ACTION, ATTACK, WATER, INTERACT}
+enum ActionStates {WATER, ATTACK, INTERACT, NO_ACTION}
 
 @export var movement_speed: float = 500
-@export var attack_duration: float = 0.33
-@export var interact_duration: float = 0.8
+@export var watering_movement_speed_multiplier: float = 0.4
 @export var water_duration: float = 0.1
+@export var interact_duration: float = 0.8
+@export var attack_duration: float = 0.33
 
 var current_state_duration: float = 0
+var current_state_maximum: float = 0
 var direction: Vector2 = Vector2(0, 0)
 var movement_state: MovementStates = MovementStates.IDLE
 var action_state: ActionStates = ActionStates.NO_ACTION
 
 var player_body: CharacterBody2D
 var animation_player: AnimationPlayer
+var state_inputs: Array = [action_state, movement_state]
 
 func _ready() -> void:
 	await owner.ready
@@ -23,28 +26,63 @@ func _ready() -> void:
 	animation_player = owner.get_node("AnimationPlayer") as AnimationPlayer
 
 func get_input() -> void:
+	var new_movement_state: MovementStates = MovementStates.IDLE
+	
 	direction = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
-	var new_movement_state = MovementStates.IDLE if direction == Vector2.ZERO else MovementStates.MOVE
+	if direction != Vector2.ZERO:
+		new_movement_state = MovementStates.MOVE
 	
-	if action_state == ActionStates.NO_ACTION:
-		if Input.is_action_pressed("attack"):
-			# cannot move when attacking
-			change_state(ActionStates.ATTACK, MovementStates.IDLE)
-		elif Input.is_action_pressed("interact"):
-			# cannot move when interacting
-			change_state(ActionStates.INTERACT, MovementStates.IDLE)
-		elif Input.is_action_pressed("water"):
-			# can but does not have to move when watering
-			change_state(ActionStates.WATER, new_movement_state)
-		else:
-			change_state(ActionStates.NO_ACTION, new_movement_state)
+	var new_action_state: ActionStates = ActionStates.NO_ACTION
+	
+	if Input.is_action_pressed("water"):
+		new_action_state = ActionStates.WATER
+	if Input.is_action_pressed("attack"):
+		new_action_state = ActionStates.ATTACK
+		new_movement_state = MovementStates.IDLE
+	if Input.is_action_pressed("interact"):
+		new_action_state = ActionStates.INTERACT
+		new_movement_state = MovementStates.IDLE
 
-func change_state(new_action_state: ActionStates, new_movement_state: MovementStates) -> void:
-	if new_action_state == ActionStates.NO_ACTION:
-		current_state_duration = 0
+	state_inputs = [new_action_state, new_movement_state]
+
+func decide_state() -> void:
+	if action_state != ActionStates.NO_ACTION:
+		return
 	
-	action_state = new_action_state
-	movement_state = new_movement_state
+	match state_inputs[0]:
+		ActionStates.WATER:
+			current_state_maximum = water_duration
+		ActionStates.ATTACK:
+			current_state_maximum = attack_duration
+		ActionStates.INTERACT:
+			current_state_maximum = interact_duration
+			
+	action_state = state_inputs[0]
+	movement_state = state_inputs[1]
+	
+func process_state() -> void:
+	if current_state_duration >= current_state_maximum:
+		if state_inputs[0] != action_state:
+			action_state = ActionStates.NO_ACTION
+			current_state_maximum = 0
+			
+		current_state_duration = 0
+		
+	match action_state:
+		ActionStates.ATTACK:
+			attack()
+		ActionStates.WATER:
+			water()
+		ActionStates.INTERACT:
+			interact()
+		ActionStates.NO_ACTION:
+			no_action()
+			
+	if movement_state == MovementStates.MOVE:
+		if action_state == ActionStates.WATER:
+			move(movement_speed * watering_movement_speed_multiplier)
+		else:
+			move(movement_speed)
 
 func move(new_movement_speed: float = movement_speed):
 	player_body.velocity = direction * new_movement_speed
@@ -61,25 +99,6 @@ func interact() -> void:
 
 func no_action() -> void:
 	pass
-
-func process_state() -> void:
-	if movement_state == MovementStates.MOVE:
-		if action_state == ActionStates.WATER:
-			move(movement_speed / 2.5)
-			print("halved")
-		else:
-			move(movement_speed)
-			print("full")
-	
-	match action_state:
-		ActionStates.ATTACK:
-			attack()
-		ActionStates.WATER:
-			water()
-		ActionStates.INTERACT:
-			interact()
-		ActionStates.NO_ACTION:
-			no_action()
 
 func _process(delta: float) -> void:
 	get_input()
@@ -115,18 +134,8 @@ func _process(delta: float) -> void:
 				await animation_player.animation_finished
 
 func _physics_process(delta: float) -> void:
-	if action_state != ActionStates.NO_ACTION:
-		current_state_duration += delta
-		
-	match action_state:
-		ActionStates.ATTACK:
-			if current_state_duration >= attack_duration:
-				change_state(ActionStates.NO_ACTION, movement_state)
-		ActionStates.INTERACT:
-			if current_state_duration >= interact_duration:
-				change_state(ActionStates.NO_ACTION, movement_state)
-		ActionStates.WATER:
-			if current_state_duration >= water_duration:
-				change_state(ActionStates.NO_ACTION, movement_state)
+	current_state_duration += delta
 	
+	decide_state()
 	process_state()
+	print(action_state, state_inputs[0])

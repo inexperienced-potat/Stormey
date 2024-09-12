@@ -1,11 +1,12 @@
 extends Node
 class_name StateMachine
 
-enum MovementStates {IDLE, MOVE}
+enum MovementStates {IDLE, MOVE, SHIFT}
 enum ActionStates {WATER, ATTACK, INTERACT, NO_ACTION}
 
-@export var movement_speed: float = 500
+@export var movement_speed: float = 400
 @export var watering_movement_speed_multiplier: float = 0.4
+@export var shifting_movement_speed_multiplier: float = 1.6
 @export var water_duration: float = 0.1
 @export var interact_duration: float = 0.8
 @export var attack_duration: float = 0.33
@@ -31,6 +32,8 @@ func get_input() -> void:
 	direction = Input.get_vector("move_left", "move_right", "move_up", "move_down").normalized()
 	if direction != Vector2.ZERO:
 		new_movement_state = MovementStates.MOVE
+		if Input.is_action_pressed("shift"):
+			new_movement_state = MovementStates.SHIFT
 	
 	var new_action_state: ActionStates = ActionStates.NO_ACTION
 	
@@ -78,11 +81,14 @@ func process_state() -> void:
 		ActionStates.NO_ACTION:
 			no_action()
 			
-	if movement_state == MovementStates.MOVE:
+	if movement_state != MovementStates.IDLE:
 		if action_state == ActionStates.WATER:
 			move(movement_speed * watering_movement_speed_multiplier)
 		else:
-			move(movement_speed)
+			if movement_state == MovementStates.SHIFT:
+				move(movement_speed * shifting_movement_speed_multiplier)
+			else:
+				move()
 
 func move(new_movement_speed: float = movement_speed):
 	player_body.velocity = direction * new_movement_speed
@@ -138,4 +144,3 @@ func _physics_process(delta: float) -> void:
 	
 	decide_state()
 	process_state()
-	print(action_state, state_inputs[0])

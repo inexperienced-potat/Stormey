@@ -1,0 +1,92 @@
+[gd_scene load_steps=4 format=3 uid="uid://dlugp8ykqmo55"]
+
+[ext_resource type="Script" path="res://scripts/droplet_pool.gd" id="1_hctk5"]
+[ext_resource type="PackedScene" uid="uid://pll4ukjn114e" path="res://scenes/droplet.tscn" id="2_mtel8"]
+[ext_resource type="PackedScene" uid="uid://dupl2t2rexf0f" path="res://scenes/droplet_splash.tscn" id="3_8q7l1"]
+
+[node name="DropletPool" type="Node2D"]
+script = ExtResource("1_hctk5")
+
+[node name="Droplets" type="Node" parent="."]
+
+[node name="Droplet1" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet2" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet3" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet4" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet5" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet6" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet7" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet8" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet9" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet10" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet11" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet12" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet13" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet14" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet15" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet16" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet17" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet18" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet19" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="Droplet20" parent="Droplets" instance=ExtResource("2_mtel8")]
+
+[node name="DropletSplashes" type="Node" parent="."]
+
+[node name="DropletSplash1" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash2" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash3" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash4" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash5" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash6" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash7" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash8" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash9" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash10" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash11" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash12" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash13" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash14" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash15" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash16" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash17" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash18" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash19" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]
+
+[node name="DropletSplash20" parent="DropletSplashes" instance=ExtResource("3_8q7l1")]

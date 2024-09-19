@@ -1,0 +1,42 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://cufcm7p3hcvq4"]
+
+[ext_resource type="Texture2D" uid="uid://ccvftqlyimne" path="res://art/droplet_drop.png" id="1_v68bp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ly2fx"]
+atlas = ExtResource("1_v68bp")
+region = Rect2(0, 0, 16, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slqr2"]
+atlas = ExtResource("1_v68bp")
+region = Rect2(0, 8, 16, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pg3jp"]
+atlas = ExtResource("1_v68bp")
+region = Rect2(0, 16, 16, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pkx41"]
+atlas = ExtResource("1_v68bp")
+region = Rect2(0, 24, 16, 8)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ly2fx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_slqr2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pg3jp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pkx41")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": true,
+"name": &"idle",
+"speed": 12.0
+}]

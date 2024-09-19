@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://pll4ukjn114e"]
+
+[ext_resource type="SpriteFrames" uid="uid://bvvafxt8vikh6" path="res://sprite_frames/droplet.tres" id="1_eubhf"]
+[ext_resource type="Script" path="res://scripts/droplet.gd" id="1_mu3op"]
+
+[node name="Droplet" type="Node2D"]
+scale = Vector2(5, 5)
+script = ExtResource("1_mu3op")
+falling_speed = 800.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_eubhf")
+animation = &"idle"
+frame_progress = 0.558648
+
+[connection signal="spawned" from="." to="." method="_on_spawned"]

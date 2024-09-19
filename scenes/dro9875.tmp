@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://pll4ukjn114e"]
+
+[ext_resource type="SpriteFrames" uid="uid://bvvafxt8vikh6" path="res://sprite_frames/droplet.tres" id="1_eubhf"]
+[ext_resource type="Script" path="res://scenes/droplet.gd" id="1_mu3op"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1a8os"]
+radius = 2.00998
+
+[node name="Droplet" type="AnimatableBody2D"]
+scale = Vector2(5, 5)
+constant_linear_velocity = Vector2(0, -5)
+script = ExtResource("1_mu3op")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(1, 1)
+shape = SubResource("CircleShape2D_1a8os")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CollisionShape2D"]
+sprite_frames = ExtResource("1_eubhf")
+animation = &"idle"
+frame_progress = 0.558648

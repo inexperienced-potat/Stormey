@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://1h2ri7acbtey"]
+
+[ext_resource type="Texture2D" uid="uid://bj85f1628dtk5" path="res://art/flower.png" id="1_0w4v0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3215h"]
+atlas = ExtResource("1_0w4v0")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dla1l"]
+atlas = ExtResource("1_0w4v0")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7nwrl"]
+atlas = ExtResource("1_0w4v0")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mxr08"]
+atlas = ExtResource("1_0w4v0")
+region = Rect2(48, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3215h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dla1l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7nwrl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mxr08")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}]

@@ -5,7 +5,7 @@ enum MovementStates {IDLE, MOVE, SHIFT}
 enum ActionStates {WATER, ATTACK, INTERACT, NO_ACTION}
 
 @export var movement_speed: float = 400
-@export var watering_movement_speed_multiplier: float = 0.4
+@export var watering_movement_speed_multiplier: float = 0.75
 @export var shifting_movement_speed_multiplier: float = 1.6
 @export var water_duration: float = 0.1
 @export var interact_duration: float = 0.8
@@ -16,15 +16,20 @@ var current_state_maximum: float = 0
 var direction: Vector2 = Vector2(0, 0)
 var movement_state: MovementStates = MovementStates.IDLE
 var action_state: ActionStates = ActionStates.NO_ACTION
-
-var player_body: CharacterBody2D
-var animation_player: AnimationPlayer
 var state_inputs: Array = [action_state, movement_state]
+
+var player: Node2D
+var animated_sprite: AnimatedSprite2D
+var droplet_pool: DropletPool
 
 func _ready() -> void:
 	await owner.ready
-	player_body = owner as CharacterBody2D
-	animation_player = owner.get_node("AnimationPlayer") as AnimationPlayer
+	
+	player = owner as Node2D
+	animated_sprite = owner.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	droplet_pool = get_tree().root.get_children()[0].get_node("DropletPool") as DropletPool
+	
+	assert(droplet_pool != null, "Map has to be the root scene")
 
 func get_input() -> void:
 	var new_movement_state: MovementStates = MovementStates.IDLE
@@ -49,7 +54,7 @@ func get_input() -> void:
 	state_inputs = [new_action_state, new_movement_state]
 
 func decide_state() -> void:
-	if action_state != ActionStates.NO_ACTION:
+	if action_state in [ActionStates.ATTACK, ActionStates.INTERACT]:
 		return
 	
 	match state_inputs[0]:
@@ -63,7 +68,7 @@ func decide_state() -> void:
 	action_state = state_inputs[0]
 	movement_state = state_inputs[1]
 	
-func process_state() -> void:
+func process_state(delta: float) -> void:
 	if current_state_duration >= current_state_maximum:
 		if state_inputs[0] != action_state:
 			action_state = ActionStates.NO_ACTION
@@ -75,7 +80,7 @@ func process_state() -> void:
 		ActionStates.ATTACK:
 			attack()
 		ActionStates.WATER:
-			water()
+			water(delta)
 		ActionStates.INTERACT:
 			interact()
 		ActionStates.NO_ACTION:
@@ -83,21 +88,21 @@ func process_state() -> void:
 			
 	if movement_state != MovementStates.IDLE:
 		if action_state == ActionStates.WATER:
-			move(movement_speed * watering_movement_speed_multiplier)
+			move(delta, movement_speed * watering_movement_speed_multiplier)
 		else:
 			if movement_state == MovementStates.SHIFT:
-				move(movement_speed * shifting_movement_speed_multiplier)
+				move(delta, movement_speed * shifting_movement_speed_multiplier)
 			else:
-				move()
+				move(delta)
 
-func move(new_movement_speed: float = movement_speed):
-	player_body.velocity = direction * new_movement_speed
-	player_body.move_and_slide()
+func move(delta: float, new_movement_speed: float = movement_speed):
+	player.position += direction * new_movement_speed * delta
 	
 func attack() -> void:
 	pass
 
-func water() -> void:
+func water(delta: float) -> void:
+	droplet_pool.spawn_droplet(delta)
 	pass
 
 func interact() -> void:
@@ -111,36 +116,21 @@ func _process(delta: float) -> void:
 	
 	match action_state:
 		ActionStates.ATTACK:
-			if animation_player.current_animation != "attack":
-				animation_player.play(&"RESET")
-				animation_player.advance(0)
-				animation_player.play("attack")
+			if not "attack" in animated_sprite.animation:
+				animated_sprite.play("attack" + str(randi_range(1, 2)))
 			else:
-				await animation_player.animation_finished
+				await animated_sprite.animation_finished
+				animated_sprite.play("attack2" if "1" in animated_sprite.animation else "attack1")
+					
 		ActionStates.WATER:
-			if animation_player.current_animation != "water":
-				animation_player.play(&"RESET")
-				animation_player.advance(0)
-				animation_player.play("water")
-			else:
-				await animation_player.animation_finished
+			animated_sprite.play("water")
 		ActionStates.INTERACT:
-			if animation_player.current_animation != "interact":
-				animation_player.play(&"RESET")
-				animation_player.advance(0)
-				animation_player.play("interact")
-			else:
-				await animation_player.animation_finished
+			animated_sprite.play("interact")
 		ActionStates.NO_ACTION:
-			if animation_player.current_animation != "idle":
-				animation_player.play(&"RESET")
-				animation_player.advance(0)
-				animation_player.play("idle")
-			else:
-				await animation_player.animation_finished
+			animated_sprite.play("idle")
 
 func _physics_process(delta: float) -> void:
 	current_state_duration += delta
 	
 	decide_state()
-	process_state()
+	process_state(delta)
